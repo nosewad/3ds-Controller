@@ -18,7 +18,7 @@ Q: Why Create this?
 - A: [A similar application](https://github.com/CTurt/3DSController) exists but is no longer maintained or functional.
 
 Q: Why is linux so much more complicated to setup?
-- A: i honestly don't fucking know. i'm not the person to ask.
+- A: i honestly don't know. i'm not the person to ask.
 
 [![wakatime](https://wakatime.com/badge/user/5089f166-a996-455c-8cbe-f75a0e2076db.svg)](https://wakatime.com/@5089f166-a996-455c-8cbe-f75a0e2076db)
 
