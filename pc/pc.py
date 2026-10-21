@@ -6,7 +6,7 @@ throttle_interval, gamepad, connected_devices = 0.01, None, {}
 # Define constants
 KEY_A, KEY_B, KEY_SELECT, KEY_START = 1, 2, 4, 8
 KEY_DRIGHT, KEY_DLEFT, KEY_DUP, KEY_DDOWN = 16, 32, 64, 128
-KEY_R, KEY_L, KEY_X, KEY_Y, KEY_ZL, KEY_ZR = 256, 512, 1024, 2048, 4096, 8192
+KEY_R, KEY_L, KEY_X, KEY_Y, KEY_ZL, KEY_ZR = 256, 512, 1024, 2048, 16384, 32768
 
 os_name = platform.system()
 print(f"Detected OS: {os_name}")
@@ -134,7 +134,7 @@ def handle_linux_controller(data, gamepad):
     gamepad.emit(uinput.ABS_HAT0X, -1 if buttons & KEY_DLEFT else 1 if buttons & KEY_DRIGHT else 0)
     
     circlepad_x, circlepad_y = struct.unpack("=h", data[4:6])[0], struct.unpack("=h", data[6:8])[0]
-    cstick_x, cstick_y = struct.unpack("=h", data[12:14])[0] if len(data) >= 14 else 0, struct.unpack("=h", data[14:16])[0] if len(data) >= 16 else 0
+    cstick_x, cstick_y = struct.unpack("=h", data[8:10])[0] if len(data) >= 10 else 0, struct.unpack("=h", data[10:12])[0] if len(data) >= 12 else 0
     
     gamepad.emit(uinput.ABS_X, map_axis_to_platform(map_axis_value(circlepad_x), "uinput"))
     gamepad.emit(uinput.ABS_Y, map_axis_to_platform(map_axis_value(-circlepad_y), "uinput"))
@@ -157,20 +157,21 @@ def handle_controller_state(data, addr, gamepad):
     else:
         connected_devices[device_key]["last_seen"] = time.time()
     
-    current_time = time.time()
-    if current_time - last_update_time < throttle_interval:
-        return
-    last_update_time = current_time
-    
-    if debug_mode:
-        print(f"Received data length: {len(data)} bytes")
-        print(f"Raw data: {data.hex()}")
-    
     if len(data) == 5 and data == b'ping\x00':
         server_socket.sendto(b'pong', addr)
         if debug_mode:
             print(f"Ping received from {ip_address}, sent pong response")
         return
+    
+    if debug_mode:
+        print(f"Received data length: {len(data)} bytes")
+        print(f"Raw data: {data.hex()}")
+    
+    current_time = time.time()
+    if current_time - last_update_time < throttle_interval:
+        return
+    last_update_time = current_time
+    
     
     try:
         if len(data) >= 8:  # Changed from 16 to 8 since we need at least 8 bytes for buttons and circlepad
