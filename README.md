@@ -1,3 +1,7 @@
+This works perfectly (as far as I've tested)
+
+
+
 # 3DS Controller
 An up-to-date 3DS homebrew application that lets you use your Nintendo 3DS as a wireless controller for Windows and Linux.
 
